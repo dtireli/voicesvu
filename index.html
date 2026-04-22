@@ -130,8 +130,8 @@
     <h1>VOICES</h1>
     <p class="tagline">The network for innovators, artists and writers.</p>
     <div class="actions">
-      <a href="/auth/sign_up" class="cta">Sign Up</a>
-      <a href="/auth/sign_in" class="login-link">Log in</a>
+      <a href="https://social.voices.vu/about" class="cta">Sign Up</a>
+      <a href="https://social.voices.vu/about" class="login-link">Log in</a>
     </div>
   </main>
 
@@ -166,32 +166,32 @@
       return palette[Math.floor(Math.random() * palette.length)];
     }
 
-    // Background filler waves — many thin, fast, colored
+    // Background filler waves — varied thickness, slower
     const bgWaves = Array.from({ length: 18 }, (_, i) => ({
       slot: i,
-      amplitude: 40 + Math.random() * 90,
-      frequency: 0.003 + Math.random() * 0.007,
-      speed:     (0.006 + Math.random() * 0.012) * (Math.random() > 0.5 ? 1 : -1),
+      amplitude: 25 + Math.random() * 110,
+      frequency: 0.002 + Math.random() * 0.008,
+      speed:     (0.003 + Math.random() * 0.007) * (Math.random() > 0.5 ? 1 : -1),
       phase:     Math.random() * Math.PI * 2,
       harmonic:  0.001 + Math.random() * 0.004,
-      hMix:      0.25 + Math.random() * 0.5,
-      opacity:   0.08 + Math.random() * 0.14,
-      lineWidth: 0.6 + Math.random() * 1.2,
+      hMix:      0.1 + Math.random() * 0.7,
+      opacity:   0.04 + Math.random() * 0.18,
+      lineWidth: 0.3 + Math.random() * 3.5,
       color:     rndColor(),
     }));
 
-    // Hero waves — fewer, thicker, glowing, slower
+    // Hero waves — wide thickness range, slower, more varied
     const heroWaves = Array.from({ length: 5 }, (_, i) => ({
       slot: i,
-      amplitude: 80 + Math.random() * 140,
-      frequency: 0.0015 + Math.random() * 0.003,
-      speed:     (0.0025 + Math.random() * 0.006) * (Math.random() > 0.5 ? 1 : -1),
+      amplitude: 50 + Math.random() * 180,
+      frequency: 0.001 + Math.random() * 0.004,
+      speed:     (0.001 + Math.random() * 0.003) * (Math.random() > 0.5 ? 1 : -1),
       phase:     Math.random() * Math.PI * 2,
-      harmonic:  0.0008 + Math.random() * 0.002,
-      hMix:      0.3 + Math.random() * 0.4,
-      opacity:   0.28 + Math.random() * 0.28,
-      lineWidth: 1.5 + Math.random() * 2.5,
-      glowSize:  16 + Math.random() * 22,
+      harmonic:  0.0005 + Math.random() * 0.003,
+      hMix:      0.1 + Math.random() * 0.7,
+      opacity:   0.15 + Math.random() * 0.35,
+      lineWidth: 0.5 + Math.random() * 5,
+      glowSize:  10 + Math.random() * 28,
       color:     rndColor(),
     }));
 
@@ -216,11 +216,11 @@
     // Radial rings — expand from center, fade as they grow
     const NUM_RINGS = 8;
     const rings = Array.from({ length: NUM_RINGS }, (_, i) => ({
-      progress: i / NUM_RINGS,   // staggered so they're always evenly spread
-      speed:    0.0018 + Math.random() * 0.001,
+      progress: i / NUM_RINGS,
+      speed:    0.0008 + Math.random() * 0.0007,
       color:    rndColor(),
-      lineWidth: 0.8 + Math.random() * 1.4,
-      ellipseY: 0.55 + Math.random() * 0.12, // slight vertical squeeze for perspective
+      lineWidth: 0.4 + Math.random() * 3.2,
+      ellipseY: 0.5 + Math.random() * 0.18,
     }));
 
     function drawRings() {
