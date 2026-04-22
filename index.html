@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOICES — The network for innovators, artists and writers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    canvas#bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Vignette to push focus to center */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.75) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+      text-align: center;
+      padding: 0 1.5rem;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 16vw, 13rem);
+      letter-spacing: 0.05em;
+      line-height: 1;
+      /* Subtle text glow for depth */
+      text-shadow: 0 0 80px rgba(255,255,255,0.08);
+    }
+
+    .tagline {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+      letter-spacing: 0.08em;
+      opacity: 0.6;
+    }
+
+    .actions {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .cta {
+      display: inline-block;
+      padding: 0.7rem 2.5rem;
+      background: #fff;
+      color: #000;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.25s, color 0.25s, outline 0.25s;
+    }
+
+    .cta:hover {
+      background: transparent;
+      color: #fff;
+      outline: 1px solid rgba(255,255,255,0.6);
+    }
+
+    .login-link {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .login-link:hover {
+      color: rgba(255,255,255,0.85);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.25;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <div class="vignette"></div>
+
+  <main class="hero">
+    <h1>VOICES</h1>
+    <p class="tagline">The network for innovators, artists and writers.</p>
+    <div class="actions">
+      <a href="/auth/sign_up" class="cta">Sign Up</a>
+      <a href="/auth/sign_in" class="login-link">Log in</a>
+    </div>
+  </main>
+
+  <footer>© VOICES 2026</footer>
+
+  <script>
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Each layer is a horizontal waveform band spread across the canvas height
+    const layers = Array.from({ length: 16 }, (_, i) => ({
+      amplitude:  0.025 + Math.random() * 0.055,
+      frequency:  0.0015 + Math.random() * 0.006,
+      speed:      (0.0002 + Math.random() * 0.0009) * (Math.random() > 0.5 ? 1 : -1),
+      phase:      Math.random() * Math.PI * 2,
+      harmonic:   0.0005 + Math.random() * 0.003,
+      harmonicMix: 0.2 + Math.random() * 0.4,
+      opacity:    0.018 + Math.random() * 0.038,
+      lineWidth:  0.4 + Math.random() * 1.8,
+      // Breathing: amplitude slowly pulses
+      breathSpeed: 0.0003 + Math.random() * 0.0008,
+      breathPhase: Math.random() * Math.PI * 2,
+    }));
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      layers.forEach((layer, i) => {
+        layer.phase += layer.speed;
+        layer.breathPhase += layer.breathSpeed;
+
+        const baseY = H * (i + 1) / (layers.length + 1);
+        const breathAmp = layer.amplitude * (0.7 + 0.3 * Math.sin(layer.breathPhase));
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255,255,255,${layer.opacity})`;
+        ctx.lineWidth = layer.lineWidth;
+
+        for (let x = 0; x <= W; x += 2) {
+          const y = baseY
+            + Math.sin(x * layer.frequency + layer.phase) * H * breathAmp
+            + Math.sin(x * layer.harmonic   + layer.phase * 0.6) * H * breathAmp * layer.harmonicMix;
+
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
