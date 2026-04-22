@@ -213,8 +213,52 @@
       ctx.stroke();
     }
 
+    // Radial rings — expand from center, fade as they grow
+    const NUM_RINGS = 8;
+    const rings = Array.from({ length: NUM_RINGS }, (_, i) => ({
+      progress: i / NUM_RINGS,   // staggered so they're always evenly spread
+      speed:    0.0018 + Math.random() * 0.001,
+      color:    rndColor(),
+      lineWidth: 0.8 + Math.random() * 1.4,
+      ellipseY: 0.55 + Math.random() * 0.12, // slight vertical squeeze for perspective
+    }));
+
+    function drawRings() {
+      const cx = W / 2;
+      const cy = H / 2;
+      const maxR = Math.sqrt(cx * cx + cy * cy); // reaches corners
+
+      rings.forEach(ring => {
+        ring.progress += ring.speed;
+        if (ring.progress > 1) {
+          ring.progress = 0;
+          ring.color = rndColor(); // new colour each cycle
+        }
+
+        const r = ring.progress * maxR;
+        // fade in briefly, then fade out over most of the journey
+        const opacity = ring.progress < 0.08
+          ? (ring.progress / 0.08) * 0.35
+          : (1 - ring.progress) * 0.35;
+
+        const [rc, gc, bc] = ring.color;
+        ctx.shadowColor = `rgba(${rc},${gc},${bc},0.5)`;
+        ctx.shadowBlur  = 14;
+        ctx.strokeStyle = `rgba(${rc},${gc},${bc},${opacity})`;
+        ctx.lineWidth   = ring.lineWidth;
+
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, r, r * ring.ellipseY, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+    }
+
     function draw() {
       ctx.clearRect(0, 0, W, H);
+
+      // Rings drawn first — deepest layer
+      ctx.shadowBlur = 0;
+      drawRings();
 
       // Background waves — no glow, distributed evenly
       ctx.shadowBlur = 0;
